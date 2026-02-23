@@ -42,7 +42,7 @@ export function ThemeToggle() {
         aria-label={`Current theme: ${currentTheme}. Click to switch to ${nextTheme}`}
       >
         <span className="transition-all duration-300">
-          {themeConfig[currentTheme].icon}
+          {themeConfig[currentTheme]?.icon}
         </span>
       </Button>
 
