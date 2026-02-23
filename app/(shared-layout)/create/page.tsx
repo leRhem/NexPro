@@ -10,28 +10,22 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { api } from "@/convex/_generated/api";
 import { createBlog } from "@/lib/actions";
 import { postSchema } from "@/lib/schema/blog";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "convex/react";
 import { Loader2Icon } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { title } from "process";
 import { useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { toast } from "sonner";
 import z from "zod";
 
 export default function CreatePage() {
   const [isPending, startTransition] = useTransition();
-  const router = useRouter();
-  const mutation = useMutation(api.posts.createPost);
   const form = useForm({
     resolver: zodResolver(postSchema),
     defaultValues: {
       title: "",
       content: "",
+      image: undefined,
     },
   });
 
@@ -88,6 +82,27 @@ export default function CreatePage() {
                       placeholder="Give us the gist of your blog post."
                       {...field}
                       className="min-h-32"
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              <Controller
+                name="image"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field>
+                    <FieldLabel>Image</FieldLabel>
+                    <Input
+                      aria-invalid={fieldState.invalid}
+                      type="file"
+                      accept="image/*"
+                      onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        field.onChange(file);
+                      }}
                     />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />

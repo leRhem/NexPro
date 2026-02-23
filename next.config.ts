@@ -9,6 +9,11 @@ const nextConfig: NextConfig = {
         hostname: "images.unsplash.com",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "optimistic-firefly-857.eu-west-1.convex.cloud",
+        port: "",
+      },
     ],
   },
 };
