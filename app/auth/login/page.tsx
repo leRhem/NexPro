@@ -7,13 +7,16 @@ import { Input } from "@/components/ui/input";
 import { authClient } from "@/lib/auth-client";
 import { loginSchema } from "@/lib/schema/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 
 export default function Login() {
     const router = useRouter();
+    const [ isPending, startTransition ] = useTransition();
     const form = useForm({
         resolver: zodResolver(loginSchema),
         defaultValues: {
@@ -22,17 +25,22 @@ export default function Login() {
         },
     });
 
-    async function onSubmit( data: z.infer<typeof loginSchema>) {
-        await authClient.signIn.email({
-            email: data.email,
-            password: data.password,
+    function onSubmit( data: z.infer<typeof loginSchema>) {
+        startTransition(async () => {
+            await authClient.signIn.email({
+                email: data.email,
+                password: data.password,
 
-            fetchOptions: {
-                onSuccess: () => {
-                    toast.success("Logged in successfully");
-                    router.push("/");
+                fetchOptions: {
+                    onSuccess: () => {
+                        toast.success("Logged in successfully");
+                        router.push("/");
+                    },
+                    onError: (error) => {
+                        toast.error(error.error.message)
+                    }
                 }
-            }
+            })
         })
     }
 
@@ -71,7 +79,14 @@ export default function Login() {
                                 </Field>
                             )} 
                         />
-                        <Button className="mt-5">Login</Button>
+                        <Button className="mt-5" disabled={isPending}>{isPending ? (
+                            <>
+                                <Loader2Icon className="size-4 animate-spin" />
+                                <span>Loading...</span>
+                            </>
+                        ) : (
+                            <span>Login</span>
+                        )}</Button>
                     </FieldGroup>
                 </form>
             </CardContent>
