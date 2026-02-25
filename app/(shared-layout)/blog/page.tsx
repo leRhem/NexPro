@@ -17,6 +17,8 @@ export const metadata: Metadata = {
   authors: [{ name: "Rhema Joseph", url: "https://www.lerhem.io" }],
 };
 
+export const dynamic = "force-dynamic";
+
 export default function BlogPage() {
   return (
     <div className="py-12">
